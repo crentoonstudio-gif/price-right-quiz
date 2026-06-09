@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Price Right Plumbing — Field Readiness Assessment</title>
+<style>
+:root{--bg:#0a0a0f;--card:#111118;--text:#e8e8f0;--muted:#8888a0;--accent:#4a9eff;--accent-hover:#6bb3ff;--good:#22c55e;--bad:#ef4444;--border:#22222a}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;display:flex;justify-content:center;align-items:center}
+.app{width:100%;max-width:600px;padding:20px}
+.screen{display:none}
+.screen.active{display:block;animation:fadeIn .3s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+h1{font-size:1.5rem;margin-bottom:8px;text-align:center}
+.subtitle{color:var(--accent);text-align:center;font-size:.85rem;text-transform:uppercase;letter-spacing:1px;margin-bottom:16px}
+.plain{color:var(--muted);text-align:center;margin-bottom:24px;line-height:1.5}
+button{width:100%;padding:14px 20px;border:none;border-radius:8px;background:var(--accent);color:#fff;font-size:1rem;font-weight:600;cursor:pointer;transition:background .2s}
+button:hover{background:var(--accent-hover)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.topline{display:flex;justify-content:space-between;color:var(--muted);font-size:.8rem;margin-bottom:16px}
+.question-box{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;margin-bottom:16px}
+.answers{display:flex;flex-direction:column;gap:10px}
+.answer-btn{background:#1e1e2e;border:2px solid #3a3a5c;color:var(--text);text-align:left;padding:16px 18px;border-radius:8px;font-size:1rem;cursor:pointer}
+.answer-btn:hover:not(:disabled){border-color:var(--accent);background:rgba(74,158,255,.15)}
+.answer-btn.selected{background:rgba(74,158,255,.25);border-color:var(--accent)}
+.company-header{text-align:center;margin-bottom:20px;padding-bottom:16px;border-bottom:2px solid var(--accent)}
+.company-logo{max-width:280px;width:90%;height:auto;margin-bottom:12px;border-radius:8px}
+.company-info{color:var(--muted);font-size:.85rem;margin-top:4px}
+.tech-info{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin:16px 0}
+.tech-info label{display:block;margin-bottom:12px;color:var(--muted);font-size:.85rem}
+.tech-info input,.tech-info select{width:100%;padding:12px;margin-top:6px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:1rem}
+.tech-info input:focus,.tech-info select:focus{outline:none;border-color:var(--accent)}
+.instructions{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin:16px 0;text-align:left}
+.instructions p{color:var(--text);margin-bottom:8px}
+.instructions ul{color:var(--muted);font-size:.9rem;padding-left:20px}
+.instructions li{margin-bottom:6px}
+.hidden{display:none!important}
+.big-score{font-size:3rem;font-weight:700;text-align:center;margin:20px 0}
+.breakdown{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:20px}
+.breakdown p{margin-bottom:8px;color:var(--muted)}
+.wrong-item{padding:12px;border-bottom:1px solid var(--border);margin-bottom:8px}
+.wrong-item:last-child{border-bottom:none}
+.wrong-item .q-text{font-size:.9rem;margin-bottom:6px}
+.wrong-item .q-ans{font-size:.85rem;color:var(--muted)}
+.fitting-img{max-width:100%;height:auto;margin:12px auto;display:block;border-radius:8px;background:#fff}
+.yesno-box{display:flex;gap:12px;margin-bottom:16px}
+.yesno-btn{flex:1;padding:16px;border:2px solid #3a3a5c;background:#1e1e2e;color:var(--text);border-radius:8px;cursor:pointer;font-size:1.1rem;font-weight:600}
+.yesno-btn:hover{border-color:var(--accent);background:rgba(74,158,255,.15)}
+.yesno-btn.selected{background:rgba(74,158,255,.25);border-color:var(--accent)}
+.textarea-box{width:100%;padding:12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-size:1rem;min-height:80px;resize:vertical}
+.textarea-box:focus{outline:none;border-color:var(--accent)}
+</style>
+</head>
+<body>
+<main class="app">
+  <!-- INTRO SCREEN -->
+  <section id="screen-intro" class="screen active">
+    <div class="company-header">
+      <img src="logo.jpg" alt="Price Right Plumbing" class="company-logo" onerror="this.style.display='none'">
+      <h1>Price Right Plumbing</h1>
+      <p class="company-info">Greenwood, IN • Bonded & Insured</p>
+    </div>
+    <p class="subtitle">Field Readiness Assessment</p>
+    <p class="plain">Powered by Operational Field Readiness Program (OFRP)<br>15 Questions • Helper Level (3 Months)</p>
+    <div class="tech-info">
+      <label>Technician Name
+        <input id="techName" placeholder="Your full name" required>
+      </label>
+      <label>Date
+        <input id="techDate" type="date" required>
+      </label>
+      <label>Experience Level
+        <select id="techLevel">
+          <option>Helper (0-6 months)</option>
+          <option>Apprentice (6-12 months)</option>
+          <option>Service Tech (1-2 years)</option>
+          <option>Lead Tech (2+ years)</option>
+        </select>
+      </label>
+    </div>
+    <div class="instructions">
+      <p><strong>Instructions:</strong></p>
+      <ul>
+        <li>15 questions total</li>
+        <li>Multiple choice, true/false, and YES/NO + explain</li>
+        <li>No time limit</li>
+        <li>Answers are silent — results shown at the end only</li>
+        <li>This page self-destructs when you close it</li>
+      </ul>
+    </div>
+    <button id="startBtn">Begin Assessment</button>
+  </section>
+
+  <!-- QUESTION SCREEN -->
+  <section id="screen-question" class="screen">
+    <div class="topline">
+      <span id="questionNumber">Question 1 of 15</span>
+      <span id="scoreDisplay">Score: 0</span>
+    </div>
+    <div class="question-box">
+      <h2 id="questionText" style="font-size:1.1rem;margin-bottom:16px;text-align:center;"></h2>
+      <img id="questionImage" class="fitting-img hidden" src="" alt="">
+      <div id="answers" class="answers"></div>
+      <div id="yesnoArea" class="hidden">
+        <div class="yesno-box">
+          <button class="yesno-btn" data-value="YES">YES</button>
+          <button class="yesno-btn" data-value="NO">NO</button>
+        </div>
+        <label style="color:var(--muted);font-size:.85rem;margin-bottom:8px;display:block;">Explain your answer:</label>
+        <textarea id="explainText" class="textarea-box" placeholder="Type your explanation here..."></textarea>
+      </div>
+    </div>
+    <button id="nextBtn" class="hidden">Next Question →</button>
+  </section>
+
+  <!-- RESULTS SCREEN -->
+  <section id="screen-results" class="screen">
+    <h1>Assessment Complete</h1>
+    <div id="finalScore" class="big-score"></div>
+    <div id="levelInfo" style="text-align:center;margin-bottom:16px;font-size:1.1rem;"></div>
+    <div id="resultsBreakdown" class="breakdown"></div>
+    <p class="plain">Session Token: <code id="sessionToken" style="background:var(--card);padding:4px 8px;border-radius:4px;font-family:monospace;"></code></p>
+    <p class="plain" style="font-size:.85rem;margin-top:8px;">Give this token to Floyd/Solomon to retrieve your results.</p>
+    <button id="closeBtn">Close & Destroy</button>
+  </section>
+</main>
+
+<script>
+const quizData = [
+  {
+    question: "Before you start any plumbing work in a customer's home, what is the FIRST thing you should do?",
+    answers: ["Start working immediately — the customer called you so you have permission","Put on shoe covers, introduce yourself, and locate the main water shutoff","Call Solomon to tell him you're at the job","Take a photo of the problem and post it to social media"],
+    correct: 1,
+    explain: "Always greet the customer, protect floors, and locate the shutoff before starting work."
+  },
+  {
+    question: "Should a technician only tell the customer about the plumbing issue they originally called for?",
+    type: "yesno",
+    correct: "NO",
+    explain: "Technicians should communicate ALL issues found, not just what the customer called for."
+  },
+  {
+    question: "The label on this fitting says '60° angle.' What fitting is actually shown?",
+    image: "images/q3-45-elbow.png",
+    answers: ["22.5° elbow","Coupling","60° elbow","45° elbow"],
+    correct: 3,
+    explain: "This is a 45° elbow fitting. There is no standard 60° PVC fitting."
+  },
+  {
+    question: "The label on this fitting says 'Reducing bushing.' What fitting is actually shown?",
+    image: "images/q4-coupling.png",
+    answers: ["Reducing bushing","Tee","Coupling","45° elbow"],
+    correct: 2,
+    explain: "This is a coupling — a straight connector with no size change."
+  },
+  {
+    question: "The label on this fitting says 'Wye.' What fitting is actually shown?",
+    image: "images/q5-90-elbow.png",
+    answers: ["Wye","Sanitary tee","Coupling","90° elbow"],
+    correct: 3,
+    explain: "This is a 90° elbow, not a wye fitting."
+  },
+  {
+    question: "The label on this fitting says 'Coupling.' What fitting is actually shown?",
+    image: "images/q6-street-22-5.png",
+    answers: ["90° elbow","Coupling","Street 45","Street 22.5°"],
+    correct: 3,
+    explain: "This is a street 22.5° elbow — note the spigot (male) end on one side."
+  },
+  {
+    question: "The label on this fitting says 'Male adapter.' What fitting is actually shown?",
+    image: "images/q7-cleanout-adapter.png",
+    answers: ["Cleanout adapter","Male adapter","Female adapter","Plug"],
+    correct: 0,
+    explain: "This is a cleanout adapter with a square nut plug on top."
+  },
+  {
+    question: "The label on this fitting says 'Wye.' What fitting is actually shown?",
+    image: "images/q8-sanitary-tee.png",
+    answers: ["Wye","Cross tee","Sanitary tee","45° elbow"],
+    correct: 2,
+    explain: "This is a sanitary tee — note the curved inlet for smooth flow."
+  },
+  {
+    question: "The label on this fitting says '90° elbow.' What fitting is actually shown, and what does it do?",
+    image: "images/q9-p-trap.png",
+    answers: ["90° elbow — changes direction of pipe flow","Wye — connects a branch line at 45°","P-trap — holds water to block sewer gases from coming back up","Sanitary tee — connects a vertical drain to a horizontal line"],
+    correct: 2,
+    explain: "This is a P-trap. It holds water to block sewer gases from entering the home."
+  },
+  {
+    question: "The label on this fitting says 'Coupling.' What fitting is actually shown?",
+    image: "images/q10-female-adapter.png",
+    answers: ["Coupling","Male adapter","Female adapter","Cap"],
+    correct: 2,
+    explain: "This is a female adapter — slip on one end, threaded female on the other."
+  },
+  {
+    question: "The label on this fitting says '45° elbow.' What fitting is actually shown?",
+    image: "images/q11-union.png",
+    answers: ["45° elbow","Coupling","Union","90° elbow"],
+    correct: 2,
+    explain: "This is a union — two pieces that unscrew in the middle for easy disassembly."
+  },
+  {
+    question: "The label on this fitting says 'Reducer.' What fitting is actually shown?",
+    image: "images/q12-bushing.png",
+    answers: ["Reducer","Bushing","Coupling","Adapter"],
+    correct: 1,
+    explain: "This is a flush bushing — spigot on large end, slip on small end."
+  },
+  {
+    question: "The label on this fitting says 'Cap.' What fitting is actually shown?",
+    image: "images/q13-plug.png",
+    answers: ["Cap","Plug","Bushing","Adapter"],
+    correct: 1,
+    explain: "This is a plug — male threads that go INSIDE a fitting. A cap goes over the outside."
+  },
+  {
+    question: "A customer calls about a water heater problem. You open the utility closet and see water on the floor. Which detail tells you this is a GAS water heater, not electric?",
+    answers: ["The water is coming from a brass drain valve near the bottom — electric heaters only have plastic valves","The T&P relief valve on the side is leaking — gas heaters mount T&P on the side, electric mounts it on top","The water is hot to the touch — gas heaters run hotter and cause more condensation than electric","The pilot light access window is fogged up from the leak — electric heaters don't have pilot access"],
+    correct: 3,
+    explain: "Gas water heaters have a pilot light access window near the bottom. Electric heaters do not."
+  },
+  {
+    question: "What measurement does this tape show?",
+    image: "images/q15-tape-measure.png",
+    answers: ["7-1/4\"","7-3/8\"","7-1/2\"","7-5/8\""],
+    correct: 3,
+    explain: "The tape shows 7-5/8 inches."
+  }
+];
+
+let current = 0, score = 0, wrong = [], techInfo = {}, answered = false, yesnoAnswer = '', explainAnswer = '';
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function generateToken() {
+  return 'PRP-' + Math.random().toString(36).substring(2, 8).toUpperCase() + '-' + Date.now().toString(36).toUpperCase();
+}
+
+function renderQuestion() {
+  answered = false;
+  yesnoAnswer = '';
+  explainAnswer = '';
+  const q = quizData[current];
+  document.getElementById('questionNumber').textContent = `Question ${current + 1} of ${quizData.length}`;
+  document.getElementById('scoreDisplay').textContent = `Score: ${score}`;
+  document.getElementById('questionText').textContent = q.question;
+  
+  // Handle image
+  const img = document.getElementById('questionImage');
+  if (q.image) {
+    img.src = q.image;
+    img.classList.remove('hidden');
+  } else {
+    img.classList.add('hidden');
+  }
+  
+  // Handle YES/NO + explain
+  if (q.type === 'yesno') {
+    document.getElementById('answers').classList.add('hidden');
+    document.getElementById('yesnoArea').classList.remove('hidden');
+    document.querySelectorAll('.yesno-btn').forEach(b => {
+      b.classList.remove('selected');
+      b.disabled = false;
+      b.onclick = () => {
+        document.querySelectorAll('.yesno-btn').forEach(btn => btn.classList.remove('selected'));
+        b.classList.add('selected');
+        yesnoAnswer = b.dataset.value;
+      };
+    });
+    document.getElementById('explainText').value = '';
+    document.getElementById('explainText').disabled = false;
+  } else {
+    document.getElementById('answers').classList.remove('hidden');
+    document.getElementById('yesnoArea').classList.add('hidden');
+    
+    const box = document.getElementById('answers');
+    box.innerHTML = '';
+    q.answers.forEach((ans, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'answer-btn';
+      btn.textContent = ans;
+      btn.onclick = () => selectAnswer(i, btn);
+      box.appendChild(btn);
+    });
+  }
+  
+  document.getElementById('nextBtn').classList.add('hidden');
+}
+
+function selectAnswer(idx, btn) {
+  if (answered) return;
+  answered = true;
+  const q = quizData[current];
+  const allBtns = document.querySelectorAll('.answer-btn');
+  allBtns.forEach((b, i) => {
+    b.disabled = true;
+    if (i === idx) b.classList.add('selected');
+  });
+  
+  if (idx === q.correct) {
+    score++;
+    document.getElementById('scoreDisplay').textContent = `Score: ${score}`;
+  } else {
+    wrong.push({q: current + 1, question: q.question, correct: q.answers[q.correct], explain: q.explain, picked: q.answers[idx]});
+  }
+  document.getElementById('nextBtn').classList.remove('hidden');
+}
+
+function handleYesNoNext() {
+  if (!yesnoAnswer) {
+    alert('Please select YES or NO.');
+    return;
+  }
+  answered = true;
+  const q = quizData[current];
+  explainAnswer = document.getElementById('explainText').value.trim();
+  
+  document.querySelectorAll('.yesno-btn').forEach(b => b.disabled = true);
+  document.getElementById('explainText').disabled = true;
+  
+  if (yesnoAnswer === q.correct) {
+    score++;
+    document.getElementById('scoreDisplay').textContent = `Score: ${score}`;
+  } else {
+    wrong.push({q: current + 1, question: q.question, correct: q.correct, explain: q.explain, picked: yesnoAnswer + (explainAnswer ? ': ' + explainAnswer : '')});
+  }
+  document.getElementById('nextBtn').classList.remove('hidden');
+}
+
+function showResults() {
+  showScreen('screen-results');
+  const pct = Math.round((score / quizData.length) * 100);
+  let level, color, advice;
+  if (pct >= 87) { level = 'Level 2 — Advancing Fast'; color = 'var(--good)'; advice = 'Ready for more responsibility. Increase job complexity.'; }
+  else if (pct >= 67) { level = 'Level 1 — On Track'; color = 'var(--accent)'; advice = 'Solid foundation. Continue current training, add intermediate topics.'; }
+  else if (pct >= 40) { level = 'Level 0 — Needs Support'; color = '#f59e0b'; advice = 'Focus on weak areas. More supervised practice needed.'; }
+  else { level = 'Needs Structured Training'; color = 'var(--bad)'; advice = 'Significant gaps. Full OFRP training program recommended.'; }
+
+  document.getElementById('finalScore').textContent = `${score}/${quizData.length} (${pct}%)`;
+  document.getElementById('finalScore').style.color = color;
+  document.getElementById('levelInfo').innerHTML = `<strong style="color:${color}">${level}</strong><br><span style="color:var(--muted);font-size:.9rem">${advice}</span>`;
+
+  let html = `<p><strong>Technician:</strong> ${techInfo.name || 'Unknown'}</p>`;
+  html += `<p><strong>Date:</strong> ${techInfo.date || 'Unknown'}</p>`;
+  html += `<p><strong>Experience:</strong> ${techInfo.level || 'Unknown'}</p>`;
+  html += `<hr style="border-color:var(--border);margin:12px 0;">`;
+  html += `<p><strong>Wrong Answers (${wrong.length}):</strong></p>`;
+  if (wrong.length === 0) {
+    html += `<p style="color:var(--good)">🎉 Perfect score! No mistakes.</p>`;
+  } else {
+    wrong.forEach(w => {
+      html += `<div class="wrong-item"><div class="q-text"><strong>Q${w.q}:</strong> ${w.question}</div><div class="q-ans">You answered: ${w.picked}</div><div class="q-ans">Correct: <span style="color:var(--good)">${w.correct}</span></div><div class="q-ans" style="font-size:.8rem;margin-top:4px">${w.explain}</div></div>`;
+    });
+  }
+  document.getElementById('resultsBreakdown').innerHTML = html;
+
+  const token = generateToken();
+  document.getElementById('sessionToken').textContent = token;
+
+  // Save results locally
+  const results = {
+    token, tech: techInfo, score, total: quizData.length, pct, level, wrong,
+    timestamp: new Date().toISOString()
+  };
+  localStorage.setItem('prp_results_' + token, JSON.stringify(results));
+  console.log('Results saved:', token, results);
+}
+
+// Event listeners
+document.getElementById('startBtn').onclick = () => {
+  const name = document.getElementById('techName').value.trim();
+  const date = document.getElementById('techDate').value;
+  if (!name || !date) { alert('Please enter your name and date.'); return; }
+  techInfo = { name, date, level: document.getElementById('techLevel').value };
+  showScreen('screen-question');
+  renderQuestion();
+};
+
+document.getElementById('nextBtn').onclick = () => {
+  if (quizData[current].type === 'yesno' && !answered) {
+    handleYesNoNext();
+    return;
+  }
+  current++;
+  if (current < quizData.length) {
+    renderQuestion();
+  } else {
+    showResults();
+  }
+};
+
+document.getElementById('closeBtn').onclick = () => {
+  localStorage.removeItem('prp_current_quiz');
+  document.body.innerHTML = '<div style="display:flex;justify-content:center;align-items:center;height:100vh;color:var(--muted)"><p>Assessment destroyed. Thank you.</p></div>';
+  setTimeout(() => { window.close(); }, 1500);
+};
+
+// Set today's date as default
+document.getElementById('techDate').valueAsDate = new Date();
+</script>
+</body>
+</html>
