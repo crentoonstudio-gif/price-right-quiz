@@ -272,6 +272,7 @@ function renderQuestion() {
         document.querySelectorAll('.yesno-btn').forEach(btn => btn.classList.remove('selected'));
         b.classList.add('selected');
         yesnoAnswer = b.dataset.value;
+        document.getElementById('nextBtn').classList.remove('hidden');
       };
     });
     document.getElementById('explainText').value = '';
